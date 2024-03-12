@@ -7,6 +7,7 @@
 <?php require_once 'header.php'; ?>
 
 <?php
+session_start();
 $FromAccount = 0;
 $ToAccount = 0;
 $TransferValue = 0;
@@ -27,8 +28,13 @@ $dbName = "acc";
 //TestCookie
 
 $CookieString = $_COOKIE["TestCookie"];
+
 //$CookieInfo = session_get_cookie_params();
-	if($CookieString == "This_is_a_Top-Secret_cookie_and_should_never_be_exposed...")
+	if(!isset($_SESSION['CSRFToken']) || !isset($_GET["CSRFToken"]) || !$_GET["CSRFToken"] || $_GET["CSRFToken"] != $_SESSION['CSRFToken'] || $CookieString != "This_is_a_Top-Secret_cookie_and_should_never_be_exposed..."){
+		echo "Incorrect cookie Value ";
+		session_destroy();
+	}
+	else
 	{
 		echo "Has Correct cookie Value Continue with transfer....................<br><br>";
 		// Create connection
@@ -62,10 +68,10 @@ $CookieString = $_COOKIE["TestCookie"];
 		//Get the balance in the from accounts and display
 		$Value_available = GetFromBal($FromAccount, $conn); 
 		$ToBalance = GetToBalance($ToAccount,$TransferValue, $conn);
-	}
-	else
-	{
-		echo "Incorrect cookie Value ";
+
+		$conn->close();
+
+		session_unset();
 	}
 
 
@@ -130,7 +136,7 @@ function GetFromBal($FromAccount, $conn) {
 	return $balance_available;
 }
 
-$conn->close();
+
 
 
 ?>

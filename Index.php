@@ -11,19 +11,24 @@
         <br><br><br>
                                 
     </form>
-	
+
+<?php
+    session_start();
+    $_SESSION['CSRFToken'] = bin2hex(random_bytes(35));
+?>
 	
 <form action="Transfer.php" method="GET">
 Account From: <input type="number" name="from"><br>
 Account To: <input type="number" name="To"><br>
 Value <input type="number" name="Value"><br>
+<input type="hidden" id="CSRFToken" name="CSRFToken" value="<?php echo $_SESSION['CSRFToken'] ?? '' ?>">
 <input type="submit">
 </form>
 
 <?php
-		    $host = "localhost";
-			$username = "TEST";
-			$password = "";
+        $host = "localhost";
+        $username = "TEST";
+        $password = "";
 	
         if (isset($_POST['createDatabase'])) {
         try {
